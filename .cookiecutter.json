@@ -1,0 +1,14 @@
+{
+  "_output_dir": "/Users/simonbordeyne/dev/apps",
+  "_template": "hp",
+  "author": "Dogeek <simon.bordeyne@gmail.com>",
+  "copyright_year": "2023",
+  "development_status": "Development Status :: 2 - Pre-Alpha",
+  "email": "simon.bordeyne@gmail.com",
+  "friendly_name": "Crunchyroll Calendar",
+  "github_user": "Dogeek",
+  "license": "MIT",
+  "package_name": "crunchyroll_calendar",
+  "project_name": "crunchyroll-calendar",
+  "version": "1.0.0"
+}
