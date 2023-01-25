@@ -16,6 +16,11 @@ Running the project :
 - Install `poetry`
 - Download the chrome driver at https://sites.google.com/chromium.org/driver/?pli=1
 - Put the path to the folder containing the driver in you `$PATH` environment variable.
+- (Optional) export the `DATA_DIR` environment variable (it's where data will be stored, especially google credentials)
 - Generate a file called `credentials.json` for the google calendar credentials. Follow google's documentation
   - Scope required : `https://www.googleapis.com/auth/calendar`
 - Run `poetry install && poetry run python3 -m crunchyroll_calendar`
+
+Alternatively, there is a docker image available at `sbordeyne/crunchyroll_calendar:1.0.0`
+
+Build using `docker build --platform=linux/amd64 -t sbordeyne/crunchyroll_calendar:1.0.0 ./Dockerfile`

@@ -6,9 +6,9 @@ from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 
 from .release import Release
+from .path import path
 
 
 class Calendar:
@@ -17,7 +17,7 @@ class Calendar:
 
     def __init__(self):
         if os.path.exists('token.json'):
-            self.creds = Credentials.from_authorized_user_file('token.json', self.SCOPES)
+            self.creds = Credentials.from_authorized_user_file(f'{str(path)}/token.json', self.SCOPES)
         if not self.creds or not self.creds.valid:
             self.authenticate()
         self.service = build('calendar', 'v3', credentials=self.creds)
@@ -29,18 +29,18 @@ class Calendar:
             self.creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', self.SCOPES)
+                f'{str(path)}/credentials.json', self.SCOPES)
             self.creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.json', 'w') as token:
+        with open(f'{str(path)}/token.json', 'w') as token:
             token.write(self.creds.to_json())
 
     @property
     def id(self) -> str:
         if self._id is not None:
             return self._id
-        if os.path.exists('calendar.json'):
-            with open('calendar.json', 'r') as f:
+        if os.path.exists(f'{str(path)}/calendar.json'):
+            with open(f'{str(path)}/calendar.json', 'r') as f:
                 self._id = json.load(f)['id']
                 return self._id
         body = {
@@ -49,7 +49,7 @@ class Calendar:
         }
         resource = self.service.calendars().insert(body=body).execute()
         self._id = resource['id']
-        with open('calendar.json', 'w') as f:
+        with open(f'{str(path)}/calendar.json', 'w') as f:
             json.dump(resource, f, indent=2)
         return self._id
 
