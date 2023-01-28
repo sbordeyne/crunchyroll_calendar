@@ -8,7 +8,7 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
 from .release import Release
-from .path import path
+from .config import path
 
 
 class Calendar:
@@ -92,6 +92,7 @@ class Calendar:
         if self.is_release_added(release):
             return
 
+        reminder = [{ 'method': 'popup', 'minutes': 0 }] if release.in_watchlist else []
         event = {
             'summary': release.event_name,
             'description': release.url,
@@ -105,9 +106,7 @@ class Calendar:
             },
             'reminders': {
                 'useDefault': False,
-                'overrides': [
-                    {'method': 'popup', 'minutes': 10},
-                ],
+                'overrides': reminder,
             },
         }
         self.service.events().insert(calendarId=self.id, body=event).execute()

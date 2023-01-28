@@ -10,6 +10,7 @@ class Release:
     hour: int
     minute: int
     day: int  # day of the week, 1=Monday 7=Sunday
+    in_watchlist: bool = False
 
     @property
     def datetime_start(self) -> datetime:

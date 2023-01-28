@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "crunchyroll-calendar"
-version = "1.0.0"
+version = "1.1.0"
 description = "Crunchyroll Calendar"
 authors = ["Dogeek <simon.bordeyne@gmail.com> <simon.bordeyne@gmail.com>"]
 license = "MIT"
@@ -9,7 +9,7 @@ homepage = "https://github.com/Dogeek/crunchyroll-calendar"
 repository = "https://github.com/Dogeek/crunchyroll-calendar"
 documentation = "https://crunchyroll-calendar.readthedocs.io"
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 5 - Production/Stable",
 ]
 
 [tool.poetry.urls]

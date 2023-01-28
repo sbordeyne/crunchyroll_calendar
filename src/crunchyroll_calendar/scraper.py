@@ -4,20 +4,38 @@ from typing import List
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
 
 from crunchyroll_calendar.release import Release
+from crunchyroll_calendar.config import username, password
 
 
 class Scraper:
-    URL = 'https://crunchyroll.com/fr/simulcastcalendar'
+    CALENDAR_URL = 'https://crunchyroll.com/fr/simulcastcalendar'
+    LOGIN_URL = (
+        'https://sso.crunchyroll.com/authorize?'
+        'client_id=noaihdevm_6iyg0a8l0q&redirect_uri='
+        'https%3A%2F%2Fwww.crunchyroll.com%2Fcallback&'
+        'response_type=cookie&state=%2F'
+    )
 
     def __init__(self):
         options = Options()
         # options.add_argument('--headless')
         # options.add_argument('--disable-gpu')  # Last I checked this was necessary.
         self.driver = Chrome(options=options)
-        self.driver.get(f'{self.URL}?filter=premium&date={self._date}')
+        if username and password:
+            self.login()
+        self.driver.get(f'{self.CALENDAR_URL}?filter=premium&date={self._date}')
         self.days = self.driver.find_elements(By.XPATH, '//div[@class="day-content"]')
+
+    def login(self):
+        self.driver.get(self.LOGIN_URL)
+        username_field = self.driver.find_element(By.NAME, 'username')
+        username_field.send_keys(username)
+        password_field = self.driver.find_element(By.NAME, 'password')
+        password_field.send_keys(password)
+        password_field.send_keys(Keys.ENTER)
 
     @property
     def _date(self) -> str:
@@ -31,6 +49,7 @@ class Scraper:
         release_nodes = day.find_elements(By.XPATH, './/article[contains(concat(" ",normalize-space(@class)," ")," release ")]')
         releases = []
         for node in release_nodes:
+            in_watchlist = len(node.find_elements(By.CSS_SELECTOR, '.queue-flag.queued')) > 0
             episode = node.get_attribute('data-episode-num')
             slug = node.get_attribute('data-slug') or ''
             name = node.find_elements(By.XPATH, './/cite')[0].text
@@ -42,6 +61,7 @@ class Scraper:
                     Release(
                         f'https://crunchyroll.com/fr/{slug}', episode, name,
                         time.hour, time.minute, day_index + 1,
+                        in_watchlist=in_watchlist,
                     )
                 )
             except ValueError:
@@ -51,7 +71,7 @@ class Scraper:
                         releases.append(
                             Release(
                                 f'https://crunchyroll.com/fr/{slug}', episode, name,
-                                time.hour, time.minute, day_index + 1,
+                                time.hour, time.minute, day_index + 1, in_watchlist=in_watchlist,
                             )
                         )
                 except ValueError:
