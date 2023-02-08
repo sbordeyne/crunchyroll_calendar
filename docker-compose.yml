@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  app:
+    image: sbordeyne/crunchyroll_calendar:1.1.0
+    container_name: crunchyroll_calendar
+    environment:
+      CRUNCHYROLL_USERNAME: $CRUNCHYROLL_USERNAME
+      CRUNCHYROLL_PASSWORD: $CRUNCHYROLL_PASSWORD
+      DATA_DIR: /data
+    volumes:
+      - "./:/data"

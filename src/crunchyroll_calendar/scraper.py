@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+import random
 from typing import List
 
 from selenium.webdriver import Chrome
@@ -21,9 +22,20 @@ class Scraper:
 
     def __init__(self):
         options = Options()
-        # options.add_argument('--headless')
-        # options.add_argument('--disable-gpu')  # Last I checked this was necessary.
+        options.headless = True
+        options.add_argument("start-maximized")
+        options.add_experimental_option("excludeSwitches", ["enable-automation"])
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
+        options.add_experimental_option('useAutomationExtension', False)
+        options.add_argument('--disable-blink-features=AutomationControlled')
+        options.add_argument('--disable-gpu')  # Last I checked this was necessary.
         self.driver = Chrome(options=options)
+        self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        user_agents = [
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36",
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/107.0.0.0 Safari/537.36",
+        ]
+        self.driver.execute_cdp_cmd("Network.setUserAgentOverride", {"userAgent": random.choice(user_agents)})
         if username and password:
             self.login()
         self.driver.get(f'{self.CALENDAR_URL}?filter=premium&date={self._date}')

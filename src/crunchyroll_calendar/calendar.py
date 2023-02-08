@@ -3,6 +3,7 @@ import os.path
 import json
 
 from google.auth.transport.requests import Request
+from google.auth.exceptions import RefreshError
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
@@ -26,7 +27,12 @@ class Calendar:
 
     def authenticate(self):
         if self.creds and self.creds.expired and self.creds.refresh_token:
-            self.creds.refresh(Request())
+            try:
+                self.creds.refresh(Request())
+            except RefreshError:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    f'{str(path)}/credentials.json', self.SCOPES)
+                self.creds = flow.run_local_server(port=0)
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
                 f'{str(path)}/credentials.json', self.SCOPES)
